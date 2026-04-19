@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY Pipfile Pipfile.lock ./
 RUN python -m pip install --no-cache-dir pipenv
-RUN pipenv install --system --deploy
+RUN pipenv install --system
 
 COPY . .
 EXPOSE 5000

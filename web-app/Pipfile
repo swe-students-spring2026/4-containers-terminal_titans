@@ -4,12 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pymongo = "*"
+pymongo = {extras = ["srv"], version = "*"}
 python-dotenv = "*"
 werkzeug = "*"
 flask = "*"
 pylint = "*"
 flask-login = "*"
+dotenv = "*"
 
 [dev-packages]
 pylint = "*"

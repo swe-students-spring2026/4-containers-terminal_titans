@@ -7,18 +7,20 @@ services:
     networks:
       - app-network
 
-  machine-learning-client:
-    build:
-      context: ./machine-learning-client
-    container_name: ml-client
-    depends_on:
-      - mongodb
-    environment:
-      - MONGO_URI=${MONGO_URI}
-      - MONGO_DBNAME=${MONGO_DBNAME}
-      - CAPTURE_INTERVAL_SECONDS=${CAPTURE_INTERVAL_SECONDS}
-    networks:
-      - app-network
+# MAC USERS: The machine-learning-client MUST be run locally (outside Docker) 
+# to access your webcam. Run: cd machine-learning-client && pipenv run python main.py
+#  machine-learning-client:
+#    build:
+#      context: ./machine-learning-client
+#    container_name: ml-client
+#    depends_on:
+#      - mongodb
+#    environment:
+#      - MONGO_URI=${MONGO_URI}
+#      - MONGO_DBNAME=${MONGO_DBNAME}
+#      - CAPTURE_INTERVAL_SECONDS=${CAPTURE_INTERVAL_SECONDS}
+#    networks:
+#      - app-network
 
   web-app:
     build:

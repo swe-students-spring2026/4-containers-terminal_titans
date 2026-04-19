@@ -8,6 +8,8 @@ fer = "*"
 setuptools = "<70.0.0"
 pymongo = {extras = ["srv"], version = "*"}
 python-dotenv = "*"
+opencv-python = "*"
+numpy = "*"
 
 [dev-packages]
 pylint = "*"

@@ -203,8 +203,9 @@ main {
 }
 
 .status-panel.active {
-    background: rgba(56, 189, 248, 0.1);
-    border: 1px solid var(--accent-color);
+    background: rgba(56, 189, 248, 0.05);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .status-panel.inactive {
@@ -341,9 +342,10 @@ main {
 /* Pomodoro Timer Specifics */
 .pomodoro-timer {
     font-family: 'Outfit', sans-serif;
-    font-size: 3rem;
-    font-weight: bold;
-    margin: 1rem 0;
+    font-size: 4.5rem; /* Increased for prominence */
+    font-weight: 800;
+    margin: 0.5rem 0;
+    text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
 }
 
 .pomodoro-focus {
@@ -577,25 +579,31 @@ main {
 
 .progress-bar {
     width: 100%;
-    height: 50px;
-    background-color: gray;
-    border-color: black;
-    border-width: 10px;
-    border-style: solid;
-    margin: 10px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 1.5rem 0 0.5rem 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .progress-fill {
-    height: 100px;
-    background-color: rgb(6, 255, 6)
+    height: 100%;
+    background-color: var(--accent-color);
+    box-shadow: 0 0 15px var(--accent-color);
+    transition: width 1s ease-in-out;
 }
 
 .alert {
-    background-color: red;
-    color: white;
-    border-color: black;
-    border-radius: 5px;
-    border-style: solid;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #fecaca;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 .card {

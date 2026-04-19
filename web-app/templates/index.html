@@ -1,55 +1,124 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dashboard - FocusFrame{% endblock %}
 {% block content %}
-    <h1>FocusFrame Dashboard</h1>
+<div class="auth-card dashboard-card container-large">
+    <header class="detail-header">
+        <div>
+            <h2 class="auth-title">FocusFrame Dashboard</h2>
+            <p class="auth-subtitle">Monitor your flow and manage your study sessions.</p>
+        </div>
+        {% if not active_session %}
+            <form action="/session/start" method="post" class="d-inline-block">
+                <button type="submit" class="btn-primary btn-auto-width">Start Study Session</button>
+            </form>
+        {% endif %}
+    </header>
+
     {% if active_session %}
         {% if distraction_message %}
             <div class="alert">
-                {{distraction_message}}
+                {{ distraction_message }}
             </div>
         {% endif %}
-        <div class="card">
-            <h1>{{mode}} Phase</h1>
-            <p>{{time_left}}</p>
+
+        <!-- Active Timer Panel -->
+        <div class="status-panel active text-center">
+            <span class="pomodoro-phase">{{ mode }} PHASE</span>
+            <h1 class="pomodoro-timer {% if mode == 'Work' %}pomodoro-focus{% else %}pomodoro-break{% endif %}">
+                {{ time_left }}
+            </h1>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ progress }}%;"></div>
+            </div>
+            <p class="text-muted mt-1">{{ progress }}% complete</p>
+
+            <div class="stats-grid boxed mt-2">
+                <div>
+                    <h3 class="stat-highlight">{{ focused_time }}s</h3>
+                    <p class="stat-label">Focused</p>
+                </div>
+                <div>
+                    <h3 class="text-error">{{ distracted_time }}s</h3>
+                    <p class="stat-label">Distracted</p>
+                </div>
+                <div>
+                    <h3 class="text-muted">{{ absent_time }}s</h3>
+                    <p class="stat-label">Absent</p>
+                </div>
+            </div>
+
+            <form action="/session/stop" method="post" class="mt-2">
+                <button type="submit" class="btn-primary btn-danger btn-auto-width">Stop Session</button>
+            </form>
         </div>
-        <div class="card">
-            <h1>Live Stats</h1>
-            <p>Focused:{{focused_time}}</p>
-            <p>Distracted:{{distracted_time}}</p>
-            <p>Absent: {{absent_time}}</p>
-        </div>
-        <div class="progress-bar">
-              <div class="progress-fill" style="width: {{ progress }}%;"></div>
-        </div>
-        <p>{{progress}}% complete</p>
-        <form action="/session/stop" method="post">
-            <button type="submit">Stop Session</button>
-        </form>
+
     {% else %}
-        <p>Welcome back, {{ username }}</p>
-        <form action="/session/start" method="post">
-            <button type="submit">Start Study Session</button>
-        </form>
-        <div class="card">
-            <h1>Study Stats</h1>
-            <p>
-                <a href="/dashboard?range=day">Day</a>
-                <a href="/dashboard?range=week">Week</a>
-                <a href="/dashboard?range=month">Month</a>
-                <a href="/dashboard?range=year">Year</a>
-            </p>
-            <img src="data:image/png;base64,{{ chart }}" alt="Study chart">
-            <p>Focused: {{ focused_total }}</p>
-            <p>Distracted: {{ distracted_total }}</p>
-            <p>Focus Rate: {{ focus_rate }}%</p>
+        <!-- Stats Summary -->
+        <div class="summary-card-detailed">
+            <div class="summary-content-layout">
+                <div>
+                    <h3 class="mb-1">Your Focus Summary</h3>
+                    <div class="compact-stats-grid">
+                        <div>
+                            <h3 class="stat-highlight">{{ focused_total }}s</h3>
+                            <p class="stat-label">Total Focus</p>
+                        </div>
+                        <div>
+                            <h3 class="text-error">{{ distracted_total }}s</h3>
+                            <p class="stat-label">Distractions</p>
+                        </div>
+                        <div>
+                            <h3 class="text-success-bold">{{ focus_rate }}%</h3>
+                            <p class="stat-label">Focus Rate</p>
+                        </div>
+                    </div>
+                    
+                    <p class="mt-2 text-muted">
+                        Range: 
+                        <a href="/dashboard?range=day" class="ml-1 {% if request.args.get('range') == 'day' or not request.args.get('range') %}text-success-bold{% endif %}">Day</a>
+                        <a href="/dashboard?range=week" class="ml-1 {% if request.args.get('range') == 'week' %}text-success-bold{% endif %}">Week</a>
+                        <a href="/dashboard?range=month" class="ml-1 {% if request.args.get('range') == 'month' %}text-success-bold{% endif %}">Month</a>
+                    </p>
+                </div>
+
+                <!-- CSS Focus Chart (similar to session detail) -->
+                <div class="focus-chart-container">
+                    <div class="focus-ring">
+                        <svg width="150" height="150">
+                            <circle class="focus-ring-bg" cx="75" cy="75" r="65"></circle>
+                            <circle class="focus-ring-fill" cx="75" cy="75" r="65" 
+                                    style="--dash-offset: {{ 408.4 * (1 - focus_rate / 100) }};">
+                            </circle>
+                        </svg>
+                        <div class="focus-percentage">
+                            <h2>{{ "%.0f"|format(focus_rate) }}%</h2>
+                            <span>FOCUS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card">
-            <h1>Recent Sessions</h1>
+
+        <!-- Recent Sessions -->
+        <h3 class="mt-3">Recent Sessions</h3>
+        {% if recent_sessions %}
+            <div class="history-list">
                 {% for session in recent_sessions %}
-            <p>{{ session.date }} | {{ session.focus_rate }}%</p>
+                <div class="history-item">
+                    <div>
+                        <strong>{{ session.date }}</strong>
+                        <p class="text-muted font-sm">Focus Rate: {{ session.focus_rate }}%</p>
+                    </div>
+                    <a href="/session/{{ session.id }}" class="btn-outline btn-sm">View Details</a>
+                </div>
                 {% endfor %}
-        </div>
+            </div>
+        {% else %}
+            <div class="snapshot-empty-state mt-1">
+                <p class="text-muted">No recent sessions found. Start studying to see your stats!</p>
+            </div>
+        {% endif %}
     {% endif %}
+</div>
 {% endblock %}
-
-

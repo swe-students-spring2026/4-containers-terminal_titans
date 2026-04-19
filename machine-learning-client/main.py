@@ -29,7 +29,10 @@ def get_face_emotion():
         # when there is an error, use a fallback image
         fallback_path = os.path.join(os.getcwd(), "img.png")
         if os.path.exists(fallback_path):
+            print(f"Camera unavailable. Using fallback image: {fallback_path}")
             img_data = cv2.imread(fallback_path)  # pylint: disable=no-member
+        else:
+            print("ERROR: Camera unavailable and no fallback 'img.png' found.")
 
     if img_data is not None:
         detector.detect_emotions(img_data)

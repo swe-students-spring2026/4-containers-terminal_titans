@@ -3,8 +3,25 @@
 import os
 from pymongo import MongoClient  # pylint: disable=import-error
 
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://mongodb:27017/focusframe")
-DB_NAME = "focusframe"
+# Default to Docker-internal hostname, but allow environment override
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://mongodb:27017/")
+DB_NAME = os.environ.get("MONGO_DBNAME", "focusframe")
+
+
+def get_client():
+    """Returns a MongoClient, attempting to resolve the 'mongodb' hostname if needed."""
+    try:
+        # Test if the intended URI works (timeout quickly)
+        test_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
+        test_client.admin.command('ping')
+        return test_client
+    except Exception:
+        # If 'mongodb' fails (standard for local run), try localhost
+        if "//mongodb" in MONGO_URI:
+            local_uri = MONGO_URI.replace("//mongodb", "//localhost")
+            print(f"Switching to local URI: {local_uri}")
+            return MongoClient(local_uri)
+        raise
 
 # Collection Names
 USERS_COLLECTION = "users"
@@ -14,7 +31,7 @@ SNAPSHOTS_COLLECTION = "snapshots"
 
 def get_collection(name):
     """Return a specific MongoDB collection."""
-    client = MongoClient(MONGO_URI)
+    client = get_client()
     database = client[DB_NAME]
     return database[name]
 

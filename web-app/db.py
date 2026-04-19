@@ -13,7 +13,14 @@ SNAPSHOTS_COLLECTION = "snapshots"
 
 def get_database():
     """Return the MongoDB database used by the web app."""
-    client = MongoClient(MONGO_URI)
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    try:
+        # Check if the server is available
+        client.admin.command('ping')
+        print(f"Connected to MongoDB at {MONGO_URI.split('@')[-1] if '@' in MONGO_URI else MONGO_URI}")
+    except Exception as e:
+        print(f"CRITICAL ERROR: Could not connect to MongoDB at {MONGO_URI}")
+        print(f"Error details: {e}")
     return client[DB_NAME]
 
 
