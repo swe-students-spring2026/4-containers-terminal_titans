@@ -13,7 +13,7 @@ def get_client():
     try:
         # Test if the intended URI works (timeout quickly)
         test_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
-        test_client.admin.command('ping')
+        test_client.admin.command("ping")
         return test_client
     except Exception:
         # If 'mongodb' fails (standard for local run), try localhost
@@ -22,6 +22,7 @@ def get_client():
             print(f"Switching to local URI: {local_uri}")
             return MongoClient(local_uri)
         raise
+
 
 # Collection Names
 USERS_COLLECTION = "users"

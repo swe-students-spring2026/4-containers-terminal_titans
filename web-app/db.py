@@ -16,8 +16,10 @@ def get_database():
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     try:
         # Check if the server is available
-        client.admin.command('ping')
-        print(f"Connected to MongoDB at {MONGO_URI.split('@')[-1] if '@' in MONGO_URI else MONGO_URI}")
+        client.admin.command("ping")
+        print(
+            f"Connected to MongoDB at {MONGO_URI.split('@')[-1] if '@' in MONGO_URI else MONGO_URI}"
+        )
     except Exception as e:
         print(f"CRITICAL ERROR: Could not connect to MongoDB at {MONGO_URI}")
         print(f"Error details: {e}")
